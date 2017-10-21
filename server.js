@@ -42,11 +42,16 @@ var exphbs = require("express-handlebars");
 
 app.engine('.hbs', exphbs({ defaultLayout: 'main', extname: '.hbs' }));
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', '.hbs');
+app.set('view engine', 'handlebars');
 
-app.get("/",function(req,res){
-    res.render("layouts/main");
-})
+// app.use(methodOverride("_method"));
+// app.engine("handlebars", exphbs({
+//     defaultLayout:"main"
+// }));
+
+// var routes= require("./controllers/routes.js");
+// app.use("/",routes);
+
 
 // A GET route for scraping the echojs website
 app.get("/scrape", function(req, res) {
