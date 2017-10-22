@@ -25,12 +25,12 @@ app.use(logger("dev"));
 // Use body-parser for handling form submissions
 app.use(bodyParser.urlencoded({ extended: false }));
 // Use express.static to serve the public folder as a static directory
-// app.use(express.static("views"));
+app.use(express.static("public"));
 
 // Set mongoose to leverage built in JavaScript ES6 Promises
 // Connect to the Mongo DB
 mongoose.Promise = Promise;
-mongoose.connect("mongodb://localhost/week18Populater", {
+mongoose.connect("mongodb://localhost/MongoScraper", {
   useMongoClient: true
 });
 
@@ -40,9 +40,11 @@ var exphbs = require("express-handlebars");
 // app.engine("handlebars", exphbs({ defaultLayout: "main" }));
 // app.set("view engine", "handlebars");
 
-app.engine('.hbs', exphbs({ defaultLayout: 'main', extname: '.hbs' }));
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'handlebars');
+app.engine('.hbs', exphbs({ defaultLayout: 'layouts', extname: '.hbs', layoutsDir:__dirname+"/views/layouts" }));
+app.set('views', path.join(__dirname, 'views/layouts'));
+app.set('view engine', '.hbs');
+
+
 
 // app.use(methodOverride("_method"));
 // app.engine("handlebars", exphbs({
@@ -56,7 +58,8 @@ app.set('view engine', 'handlebars');
 // A GET route for scraping the echojs website
 app.get("/scrape", function(req, res) {
   // First, we grab the body of the html with request
-  axios.get("http://www.echojs.com/").then(function(response) {
+  // "http://www.echojs.com/"
+  axios.get("https://daily.jstor.org/?utm_source=JSTOR-homepage-2017&utm_medium=display&utm_campaign=JSTOR-homepage-2017&cid=dsp_JSTOR-homepage-2017").then(function(response) {
     // Then, we load that into cheerio and save it to $ for a shorthand selector
     var $ = cheerio.load(response.data);
 
@@ -72,7 +75,6 @@ app.get("/scrape", function(req, res) {
       result.link = $(this)
         .children("a")
         .attr("href");
-
       // Create a new Article using the `result` object built from scraping
       db.Article
         .create(result)
