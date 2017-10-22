@@ -37,12 +37,12 @@ mongoose.connect("mongodb://localhost/MongoScraper", {
 // Routes
 var exphbs = require("express-handlebars");
 
-// app.engine("handlebars", exphbs({ defaultLayout: "main" }));
-// app.set("view engine", "handlebars");
+app.engine("handlebars", exphbs({ defaultLayout: "main" }));
+app.set("view engine", "handlebars");
 
-app.engine('.hbs', exphbs({ defaultLayout: 'layouts', extname: '.hbs', layoutsDir:__dirname+"/views/layouts" }));
-app.set('views', path.join(__dirname, 'views/layouts'));
-app.set('view engine', '.hbs');
+// app.engine('.hbs', exphbs({ defaultLayout: 'layouts', extname: '.hbs', layoutsDir:__dirname+"/views/layouts" }));
+// app.set('views', path.join(__dirname, 'views/layouts'));
+// app.set('view engine', '.hbs');
 
 
 
@@ -53,6 +53,10 @@ app.set('view engine', '.hbs');
 
 // var routes= require("./controllers/routes.js");
 // app.use("/",routes);
+
+app.get("/", function(req,res){
+  res.render("index",newsListing);
+});
 
 
 // A GET route for scraping the echojs website
@@ -75,6 +79,9 @@ app.get("/scrape", function(req, res) {
       result.link = $(this)
         .children("a")
         .attr("href");
+      result.description=$(this)
+      .children("p")
+      .text();
       // Create a new Article using the `result` object built from scraping
       db.Article
         .create(result)
